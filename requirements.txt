@@ -272,3 +272,4 @@ widgetsnbextension==4.0.10
 wrapt==1.12.1
 zipp==3.18.1
 zstandard==0.22.0
+distutils
