@@ -10,6 +10,9 @@ from PIL import Image
 import subprocess
 import sys
 import os
+from streamlit_webrtc import webrtc_streamer, RTCConfiguration
+import copy
+import av
 
 def install_requirements():
     try:
@@ -87,74 +90,10 @@ def main():
     point_history = deque(maxlen=16)
     finger_gesture_history = deque(maxlen=16)
    
-    mode = 0
-# Start video capture
+    webrtc_streamer(key="sample")    
 
-    cap = cv.VideoCapture(cap_device)
-    cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
-    cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
 
-    stframe = st.empty()  # Streamlit frame to display video
 
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            st.warning("Failed to read from camera.")
-            break
-
-        # Process frame
-        frame = cv.flip(frame, 1)
-        debug_image = copy.deepcopy(frame)
-        image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-        results = hands.process(image)
-
-        # Hand detection logic
-        if results.multi_hand_landmarks:
-            for hand_landmarks, handedness in zip(results.multi_hand_landmarks, results.multi_handedness):
-                # Bounding box calculation
-                brect = calc_bounding_rect(debug_image, hand_landmarks)
-                landmark_list = calc_landmark_list(debug_image, hand_landmarks)
-
-                # Process landmark list
-                pre_processed_landmark_list = pre_process_landmark(landmark_list)
-                pre_processed_point_history_list = pre_process_point_history(debug_image, point_history)
-
-                # Gesture classification
-                hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
-                if hand_sign_id == 2:  # Point gesture
-                    point_history.append(landmark_list[8])
-                else:
-                    point_history.append([0, 0])
-
-                # Finger gesture classification
-                finger_gesture_id = 0
-                if len(pre_processed_point_history_list) == (16 * 2):
-                    finger_gesture_id = point_history_classifier(pre_processed_point_history_list)
-
-                finger_gesture_history.append(finger_gesture_id)
-                most_common_fg_id = Counter(finger_gesture_history).most_common()
-
-                # Draw on the frame
-                debug_image = draw_bounding_rect(True, debug_image, brect)
-                debug_image = draw_landmarks(debug_image, landmark_list)
-                debug_image = draw_info_text(
-                    debug_image,
-                    brect,
-                    handedness,
-                    keypoint_classifier_labels[hand_sign_id],
-                    point_history_classifier_labels[most_common_fg_id[0][0]]
-                )
-        else:
-            point_history.append([0, 0])
-
-        # Draw additional info
-        debug_image = draw_point_history(debug_image, point_history)
-        debug_image = draw_info(debug_image,mode, -1)
-
-        # Display frame in Streamlit
-        stframe.image(debug_image, channels="BGR")
-
-    cap.release()
 
 def calc_bounding_rect(image, landmarks):
     image_width, image_height = image.shape[1], image.shape[0]
