@@ -12,11 +12,11 @@ from PIL import Image
 from model import KeyPointClassifier, PointHistoryClassifier
 
 def main():
-    st.title("Hand Gesture Recognition")
+    st.title("Hand Gesture Bot")
     import streamlit as st
 
 def main():
-    st.title("Hand Gesture Recognition")
+    st.title("Hand Gesture Bot")
     
     # Resize images to reduce height
     thank_you = Image.open(r"images\thankyou.png").resize((120, 70))
@@ -41,14 +41,12 @@ def main():
     cap_device = st.sidebar.number_input("Camera device index", value=0, step=1)
     cap_width = st.sidebar.number_input("Capture width", value=960, step=100)
     cap_height = st.sidebar.number_input("Capture height", value=540, step=100)
-    use_static_image_mode = st.sidebar.checkbox("Use static image mode", value=False)
     min_detection_confidence = st.sidebar.slider("Min detection confidence", 0.0, 1.0, 0.7)
     min_tracking_confidence = st.sidebar.slider("Min tracking confidence", 0.0, 1.0, 0.5)
 
     # Load models
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(
-        static_image_mode=use_static_image_mode,
         max_num_hands=2,
         min_detection_confidence=min_detection_confidence,
         min_tracking_confidence=min_tracking_confidence
