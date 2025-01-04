@@ -9,6 +9,7 @@ import csv
 from PIL import Image
 import subprocess
 import sys
+import os
 
 def install_requirements():
     try:
@@ -29,11 +30,20 @@ def main():
 def main():
     st.title("Hand Gesture Bot")
     
-    # Resize images to reduce height
-    thank_you = Image.open(r"images\thankyou.png").resize((120, 70))
-    hello = Image.open(r"images\hello.png").resize((70, 70))
-    i_love_you = Image.open(r"images\iloveyou.png").resize((70, 70))
-    pointer = Image.open(r"images\pointer.png").resize((70, 70))
+    # Get the current directory of the script
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Construct the absolute paths to the images
+    thank_you_path = os.path.join(current_dir, 'images', 'thankyou.png')
+    hello_path = os.path.join(current_dir, 'images', 'hello.png')
+    i_love_you_path = os.path.join(current_dir, 'images', 'iloveyou.png')
+    pointer_path = os.path.join(current_dir, 'images', 'pointer.png')
+
+    # Resize images
+    thank_you = Image.open(thank_you_path).resize((120, 70))
+    hello = Image.open(hello_path).resize((70, 70))
+    i_love_you = Image.open(i_love_you_path).resize((70, 70))
+    pointer = Image.open(pointer_path).resize((70, 70))
 
     # Create two columns for the first two images
     col1, col2, col3, col4 = st.columns(4)
