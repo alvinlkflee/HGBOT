@@ -10,6 +10,7 @@ from PIL import Image
 import subprocess
 import sys
 import os
+import streamlit.web.cli as stcli
 
 def install_requirements():
     try:
@@ -89,7 +90,6 @@ def main():
    
     mode = 0
 # Start video capture
-
     cap = cv.VideoCapture(cap_device)
     cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
     cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
